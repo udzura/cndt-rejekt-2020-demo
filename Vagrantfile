@@ -17,18 +17,32 @@ Vagrant.configure("2") do |config|
 end
 
 =begin
-    6  sudo apt update
-    7  sudo apt upgrade
-    9  sudo snap install kubectl --classic
-   29  wget https://github.com/kubernetes/minikube/releases/download/v1.12.3/minikube-linux-amd64
-   30  sudo cp minikube-linux-amd64 /usr/local/bin/minikube
-   32  sudo chmod a+x /usr/local/bin/minikube
-sudo apt-get install \
+apt update
+apt upgrade
+snap install kubectl --classic
+wget https://github.com/kubernetes/minikube/releases/download/v1.12.3/minikube-linux-amd64
+cp minikube-linux-amd64 /usr/local/bin/minikube
+chmod a+x /usr/local/bin/minikube
+apt install \
     apt-transport-https \
     ca-certificates \
     curl \
     software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+apt install docker-ce
+apt install -y bison build-essential cmake flex git libedit-dev \
+    libllvm7 llvm-7-dev libclang-7-dev python zlib1g-dev libelf-dev
+git clone https://github.com/iovisor/bcc.git
+pushd bcc/
+git checkout v0.16.0
+mkdir build; cd build
+cmake
+make -j8
+make install
+popd
 
-
+minikube start --vm-driver=none
+kubectl apply -k /vagrant/manifests/
+minikube service wordpress --url
+apt install apache-utils
 =end
